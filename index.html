@@ -10,7 +10,10 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a19;--card:#1e2726;--ink:#eef2f1;--mute:#93a19e;--line:#2c3836;--acc:#ef5a4e;--acc-bg:#331c1a;--acc-ink:#1a0806;--ok:#4cc2a5}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;max-width:520px;margin-inline:auto;padding:16px}
-h1{font-size:22px;margin:4px 0 14px}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+h1{font-size:22px;margin:0}
+.trash{width:40px;height:40px;display:grid;place-items:center;background:var(--card);border:1.5px solid var(--line);color:var(--mute);border-radius:12px;transition:color .15s,border-color .15s}
+.trash:hover,.trash:active{color:var(--acc);border-color:var(--acc)}
 .total{background:var(--ink);color:var(--bg);border-radius:18px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
 .total b{font-size:54px;line-height:1;font-weight:800}
 .total span{font-size:14px;opacity:.8}
@@ -51,7 +54,6 @@ h2{font-size:16px;margin:22px 0 8px}
 .gbtn:disabled{opacity:.45;cursor:not-allowed}
 .greset{padding:0 16px;background:var(--line);color:var(--ink);font-weight:700;font-size:15px}
 .top{margin-top:10px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:14px}.top b{color:var(--acc)}
-.reset{margin-top:18px;width:100%;padding:12px;background:none;border:1.5px solid var(--line);color:var(--mute)}
 button:focus-visible,input:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
 
 dialog{border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:18px;width:min(320px,90vw);box-shadow:0 12px 32px rgba(0,0,0,.28)}
@@ -65,7 +67,17 @@ dialog input[type="number"]{font-size:24px;text-align:center}
 </style>
 </head>
 <body>
-<h1>Catatan Kalah</h1>
+<div class="hdr">
+  <h1>Catatan Kalah</h1>
+  <button class="trash" id="reset" aria-label="Hapus semua data" title="Hapus semua data">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="3 6 5 6 21 6"></polyline>
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      <line x1="10" y1="11" x2="10" y2="17"></line>
+      <line x1="14" y1="11" x2="14" y2="17"></line>
+    </svg>
+  </button>
+</div>
 <div class="total"><div><span>Total game selesai</span><br><b id="tg">0</b></div><span id="tp">0 pemain</span></div>
 <div class="gbar"><button class="gbtn" id="gDone" disabled>Pilih yang kalah dulu</button><button class="greset" id="gReset" aria-label="Reset skor game">Reset</button></div>
 <div class="top" id="top"></div>
@@ -75,7 +87,6 @@ dialog input[type="number"]{font-size:24px;text-align:center}
 <div id="rec"></div>
 <h2>Riwayat</h2>
 <ul class="log" id="log"></ul>
-<button class="reset" id="reset">Hapus semua data</button>
 
 <dialog id="cntDlg">
   <form method="dialog" id="cntForm">
