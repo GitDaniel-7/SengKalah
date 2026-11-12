@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Catatan Kalah</title>
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#1d2b2a;--mute:#6b7775;--line:#e2dfd7;--acc:#c8372d;--acc-bg:#fdf2f1;--acc-ink:#fff;--ok:#1f6f5c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a19;--card:#1e2726;--ink:#eef2f1;--mute:#93a19e;--line:#2c3836;--acc:#ef5a4e;--acc-bg:#331c1a;--acc-ink:#1a0806;--ok:#4cc2a5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;max-width:520px;margin-inline:auto;padding:16px}
+h1{font-size:22px;margin:4px 0 14px}
+.total{background:var(--ink);color:var(--bg);border-radius:18px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+.total b{font-size:54px;line-height:1;font-weight:800}
+.total span{font-size:14px;opacity:.8}
+.add{display:flex;gap:8px;margin:14px 0}
+input{flex:1;min-width:0;padding:14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+#nm,#nameVal{text-transform:uppercase}
+#nm::placeholder,#nameVal::placeholder{text-transform:none}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;-webkit-user-select:none;user-select:none}
+.btn{background:var(--ok);color:#fff;padding:0 18px;font-weight:700}
+
+.row{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s,background-color .15s,transform .08s;-webkit-tap-highlight-color:transparent}
+.row:active{transform:scale(.99)}
+.row.sel{border-color:var(--acc);background:var(--acc-bg)}
+.radio{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--mute);display:grid;place-items:center;flex-shrink:0;transition:border-color .15s}
+.row.sel .radio{border-color:var(--acc)}
+.radio::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--acc);transform:scale(0);transition:transform .15s}
+.row.sel .radio::after{transform:scale(1)}
+
+.nm{flex:1;min-width:0}
+.nm strong{display:block;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm small{color:var(--mute)}
+.row.sel .nm small{color:var(--acc);font-weight:700}
+
+.cnt{font-size:28px;font-weight:800;min-width:48px;height:44px;padding:0 10px;border-radius:12px;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;text-align:center;flex-shrink:0}
+.row.sel .cnt{background:var(--card);border-color:var(--acc)}
+
+.act{display:flex;align-items:center;gap:2px}
+.iconbtn{background:none;color:var(--mute);font-size:17px;padding:8px 6px;border-radius:8px}
+.iconbtn:hover{color:var(--ink)}
+
+h2{font-size:16px;margin:22px 0 8px}
+.log{list-style:none;padding:0;margin:0}
+.log li{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.log .p{color:var(--acc);font-weight:700}.log .m{color:var(--ok);font-weight:700}
+.empty{color:var(--mute);text-align:center;padding:18px 0}
+.gbar{display:flex;gap:8px;margin-top:10px}
+.gbtn{flex:1;padding:16px;background:var(--ok);color:#fff;font-weight:800;font-size:17px;transition:opacity .15s}
+.gbtn:disabled{opacity:.45;cursor:not-allowed}
+.greset{padding:0 16px;background:var(--line);color:var(--ink);font-weight:700;font-size:15px}
+.top{margin-top:10px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:14px}.top b{color:var(--acc)}
+.reset{margin-top:18px;width:100%;padding:12px;background:none;border:1.5px solid var(--line);color:var(--mute)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
+
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:18px;width:min(320px,90vw);box-shadow:0 12px 32px rgba(0,0,0,.28)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 12px;font-size:17px}
+dialog input{width:100%;font-size:20px;font-weight:700;margin-bottom:12px}
+dialog input[type="number"]{font-size:24px;text-align:center}
+.dact{display:flex;gap:8px}
+.dact button{flex:1;padding:12px;font-weight:700}
+.cancel{background:var(--line);color:var(--ink)}
+</style>
+</head>
+<body>
+<h1>Catatan Kalah</h1>
+<div class="total"><div><span>Total game selesai</span><br><b id="tg">0</b></div><span id="tp">0 pemain</span></div>
+<div class="gbar"><button class="gbtn" id="gDone" disabled>Pilih yang kalah dulu</button><button class="greset" id="gReset" aria-label="Reset skor game">Reset</button></div>
+<div class="top" id="top"></div>
+<div class="add"><input id="nm" placeholder="Nama pemain" maxlength="30" autocomplete="off" autocapitalize="characters"><button class="btn" id="addBtn">Tambah</button></div>
+<div id="list"></div>
+<h2>Rekap game</h2>
+<div id="rec"></div>
+<h2>Riwayat</h2>
+<ul class="log" id="log"></ul>
+<button class="reset" id="reset">Hapus semua data</button>
+
+<dialog id="cntDlg">
+  <form method="dialog" id="cntForm">
+    <h3 id="cntTitle">Edit total kalah</h3>
+    <input id="cntVal" type="number" inputmode="numeric" pattern="[0-9]*" min="0" placeholder="0" required>
+    <div class="dact">
+      <button type="button" class="cancel" id="cntCancel">Batal</button>
+      <button type="submit" class="btn">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="nameDlg">
+  <form method="dialog" id="nameForm">
+    <h3>Ubah nama pemain</h3>
+    <input id="nameVal" type="text" maxlength="30" placeholder="Nama pemain" autocomplete="off" autocapitalize="characters" required>
+    <div class="dact">
+      <button type="button" class="cancel" id="nameCancel">Batal</button>
+      <button type="submit" class="btn">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+var S={players:[],log:[],rec:[]};
+var selectedId=null;
+try{var raw=localStorage.getItem("catatan-kalah");if(raw)S=JSON.parse(raw)}catch(e){}
+if(!Array.isArray(S.players))S.players=[];
+if(!Array.isArray(S.log))S.log=[];
+if(!Array.isArray(S.rec))S.rec=[];
+S.players.forEach(function(p){if(p.name)p.name=p.name.toUpperCase()});
+
+function save(){try{localStorage.setItem("catatan-kalah",JSON.stringify(S))}catch(e){}}
+function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML}
+function fmt(ts){var d=new Date(ts);return d.toLocaleDateString("id-ID",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}
+
+function render(){
+  if(selectedId&&!S.players.some(function(p){return p.id===selectedId}))selectedId=null;
+  var totalGames=S.players.reduce(function(a,p){return a+(p.n||0)},0);
+  var max=S.players.reduce(function(a,p){return Math.max(a,p.n||0)},0);
+  var tops=max>0?S.players.filter(function(p){return p.n===max}):[];
+
+  document.getElementById("tg").textContent=totalGames;
+  document.getElementById("tp").textContent=S.players.length+" pemain";
+  document.getElementById("top").innerHTML=tops.length
+    ?'Paling banyak kalah: <b>'+tops.map(function(p){return esc(p.name)}).join(", ")+'</b> ('+max+'x)'
+    :'Belum ada catatan kalah. Ketuk nama yang kalah lalu tekan Game selesai.';
+
+  var selPlayer=S.players.find(function(p){return p.id===selectedId});
+  var gBtn=document.getElementById("gDone");
+  if(selPlayer){
+    gBtn.disabled=false;
+    gBtn.textContent="Game selesai ("+selPlayer.name+" kalah)";
+  }else{
+    gBtn.disabled=true;
+    gBtn.textContent="Pilih yang kalah dulu";
+  }
+
+  var l=document.getElementById("list");
+  l.innerHTML=S.players.length?S.players.map(function(p){
+    var isSel=p.id===selectedId;
+    return '<div class="row'+(isSel?' sel':'')+'" role="radio" aria-checked="'+isSel+'" data-id="'+p.id+'">'+
+      '<div class="radio"></div>'+
+      '<div class="nm"><strong>'+(tops.indexOf(p)>-1?'👑 ':'')+esc(p.name)+'</strong>'+
+      '<small>'+(isSel?'Terpilih kalah di game ini':'Ketuk untuk pilih kalah')+'</small></div>'+
+      '<div class="cnt" data-cnt="'+p.id+'" title="Ketuk angka untuk edit manual">'+p.n+'</div>'+
+      '<div class="act">'+
+        '<button type="button" class="iconbtn" aria-label="Edit nama" data-edit="'+p.id+'">✎</button>'+
+        '<button type="button" class="iconbtn" aria-label="Hapus pemain" data-del="'+p.id+'">✕</button>'+
+      '</div>'+
+    '</div>';
+  }).join(""):'<div class="empty">Belum ada pemain. Ketik nama lalu tekan Tambah.</div>';
+
+  document.getElementById("rec").innerHTML=S.rec.length?
+    S.rec.slice().reverse().map(function(r,i){
+      var no=S.rec.length-i;
+      var loser=r.loser||(r.tops&&r.tops.join(", "))||"-";
+      return '<div class="row" style="display:block;cursor:default"><strong>Game '+no+'</strong> <small style="color:var(--mute)">'+fmt(r.t)+'</small><br>💀 Kalah: <b>'+esc(loser)+'</b></div>';
+    }).join("")
+    :'<div class="empty">Belum ada game selesai.</div>';
+
+  var g=document.getElementById("log");
+  g.innerHTML=S.log.length?S.log.slice(-40).reverse().map(function(e){
+    if(e.rn)return '<li><span>'+esc(e.oldName)+' → <b>'+esc(e.newName)+'</b></span><span style="color:var(--mute)">'+fmt(e.t)+'</span></li>';
+    if(e.rst)return '<li><span>Reset skor (nama pemain tetap)</span><span style="color:var(--mute)">'+fmt(e.t)+'</span></li>';
+    if(e.set!==undefined)return '<li><span>Edit manual <b>'+esc(e.name)+'</b>: '+e.from+' → <b>'+e.set+'</b></span><span style="color:var(--mute)">'+fmt(e.t)+'</span></li>';
+    return '<li><span><b>'+esc(e.name)+'</b> kalah <span class="p">+1</span></span><span style="color:var(--mute)">'+fmt(e.t)+'</span></li>';
+  }).join(""):'<li class="empty" style="display:block;border:0">Belum ada catatan.</li>';
+}
+
+function addPlayer(){
+  var i=document.getElementById("nm"),v=i.value.trim().toUpperCase();
+  if(!v)return;
+  S.players.push({id:Date.now()+""+Math.floor(Math.random()*1000),name:v,n:0});
+  i.value="";save();render();
+}
+document.getElementById("addBtn").onclick=addPlayer;
+document.getElementById("nm").onkeydown=function(e){if(e.key==="Enter")addPlayer()};
+
+var editCntId=null,editNameId=null;
+var cntDlg=document.getElementById("cntDlg"),cntVal=document.getElementById("cntVal"),cntTitle=document.getElementById("cntTitle");
+var nameDlg=document.getElementById("nameDlg"),nameVal=document.getElementById("nameVal");
+
+document.getElementById("list").onclick=function(e){
+  var delBtn=e.target.closest("[data-del]");
+  if(delBtn){
+    var dp=S.players.find(function(x){return x.id===delBtn.dataset.del});
+    if(dp&&confirm("Hapus "+dp.name+"?")){
+      S.players=S.players.filter(function(x){return x.id!==dp.id});
+      if(selectedId===dp.id)selectedId=null;
+      save();render();
+    }
+    return;
+  }
+
+  var editBtn=e.target.closest("[data-edit]");
+  if(editBtn){
+    var ep=S.players.find(function(x){return x.id===editBtn.dataset.edit});
+    if(ep){
+      editNameId=ep.id;
+      nameVal.value=ep.name;
+      nameDlg.showModal();
+      setTimeout(function(){nameVal.focus();nameVal.select()},50);
+    }
+    return;
+  }
+
+  var cntBox=e.target.closest("[data-cnt]");
+  if(cntBox){
+    var cp=S.players.find(function(x){return x.id===cntBox.dataset.cnt});
+    if(cp){
+      editCntId=cp.id;
+      cntTitle.textContent="Total kalah "+cp.name;
+      cntVal.value=cp.n;
+      cntDlg.showModal();
+      setTimeout(function(){cntVal.focus();cntVal.select()},50);
+    }
+    return;
+  }
+
+  var row=e.target.closest(".row[data-id]");
+  if(row){
+    var id=row.dataset.id;
+    selectedId=(selectedId===id)?null:id;
+    render();
+  }
+};
+
+document.getElementById("cntCancel").onclick=function(){cntDlg.close()};
+cntDlg.onclick=function(e){if(e.target===cntDlg)cntDlg.close()};
+document.getElementById("cntForm").onsubmit=function(e){
+  e.preventDefault();
+  var val=parseInt(cntVal.value,10);
+  if(!editCntId||isNaN(val)||val<0){cntDlg.close();return}
+  var p=S.players.find(function(x){return x.id===editCntId});
+  if(p&&p.n!==val){
+    var oldVal=p.n;
+    p.n=val;
+    S.log.push({name:p.name,from:oldVal,set:val,t:Date.now()});
+    save();render();
+  }
+  cntDlg.close();
+};
+
+document.getElementById("nameCancel").onclick=function(){nameDlg.close()};
+nameDlg.onclick=function(e){if(e.target===nameDlg)nameDlg.close()};
+document.getElementById("nameForm").onsubmit=function(e){
+  e.preventDefault();
+  var newName=nameVal.value.trim().toUpperCase();
+  if(!editNameId||!newName){nameDlg.close();return}
+  var p=S.players.find(function(x){return x.id===editNameId});
+  if(p&&p.name!==newName){
+    var oldName=p.name;
+    p.name=newName;
+    S.log.push({rn:1,oldName:oldName,newName:newName,t:Date.now()});
+    save();render();
+  }
+  nameDlg.close();
+};
+
+document.getElementById("gDone").onclick=function(){
+  if(!selectedId)return;
+  var p=S.players.find(function(x){return x.id===selectedId});
+  if(!p)return;
+  p.n=(p.n||0)+1;
+  S.rec.push({t:Date.now(),loserId:p.id,loser:p.name});
+  S.log.push({name:p.name,d:1,t:Date.now()});
+  selectedId=null;
+  save();render();
+};
+
+document.getElementById("gReset").onclick=function(){
+  if(confirm("Reset semua angka kekalahan ke 0 dan bersihkan rekap game? (Nama pemain tetap tersimpan)")){
+    S.players.forEach(function(p){p.n=0});
+    S.rec=[];
+    selectedId=null;
+    S.log.push({rst:1,t:Date.now()});
+    save();render();
+  }
+};
+
+document.getElementById("reset").onclick=function(){
+  if(confirm("Hapus semua pemain dan riwayat?")){
+    S={players:[],log:[],rec:[]};
+    selectedId=null;
+    save();render();
+  }
+};
+
+render();
+</script>
+</body>
+</html>
